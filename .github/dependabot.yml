@@ -1,0 +1,22 @@
+---
+version: 2
+updates:
+  - directory: /
+    package-ecosystem: npm
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 1
+    target-branch: main
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 1
+    target-branch: main
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
