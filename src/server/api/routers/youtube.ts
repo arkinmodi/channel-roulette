@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { decode } from "html-entities";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -8,7 +9,7 @@ export const youtubeRouter = createTRPCRouter({
     .input(z.object({ customUrl: z.string() }))
     .query(async ({ input }) => {
       const youtubeChannelPageResponse = await fetch(
-        `https://www.youtube.com/${input.customUrl}`,
+        `https://www.youtube.com/@${input.customUrl}`,
         {
           method: "GET",
           headers: {
@@ -93,6 +94,7 @@ export const youtubeRouter = createTRPCRouter({
       youtubeSearchApiUrl.searchParams.append("order", "date");
       youtubeSearchApiUrl.searchParams.append("part", "id");
       youtubeSearchApiUrl.searchParams.append("part", "snippet");
+      youtubeSearchApiUrl.searchParams.append("maxResults", "50");
 
       youtubeSearchApiUrl.searchParams.append("channelId", input.channelId);
 
@@ -149,9 +151,10 @@ export const youtubeRouter = createTRPCRouter({
       }
 
       return {
+        channelTitle: decode(chosenVideo.snippet.channelTitle),
         video: {
           id: chosenVideo.id.videoId,
-          title: chosenVideo.snippet.title,
+          title: decode(chosenVideo.snippet.title),
           thumbnail: chosenVideo.snippet.thumbnails.high.url,
         },
       };
