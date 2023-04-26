@@ -19,6 +19,13 @@ export const youtubeRouter = createTRPCRouter({
       );
 
       if (!youtubeChannelPageResponse.ok) {
+        if (youtubeChannelPageResponse.status === 404) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `Failed to find the YouTube Channel for @${input.customUrl}`,
+          });
+        }
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `Failed to fetch YouTube channel's HTML page. Recieved: ${
