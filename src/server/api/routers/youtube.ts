@@ -168,6 +168,8 @@ export const youtubeRouter = createTRPCRouter({
     }),
 });
 
+export type YoutubeRouter = typeof youtubeRouter;
+
 type YouTubeSearchApiResponseBody = {
   kind: string;
   etag: string;
