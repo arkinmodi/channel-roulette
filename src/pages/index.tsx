@@ -9,6 +9,10 @@ const Home: NextPage = () => {
   const [youtubeChannelId, setYoutubeChannelId] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [publishedBeforeDate, setPublishBeforeDate] = useState<Date | null>(
+    null
+  );
+  const [publishedAfterDate, setPublishAfterDate] = useState<Date | null>(null);
 
   const router = useRouter();
 
@@ -31,11 +35,30 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (youtubeChannelId !== "") {
       localStorage.setItem(youtubeCustomUrl, youtubeChannelId);
+
+      let queryParams = "";
+      if (publishedBeforeDate || publishedAfterDate) {
+        queryParams = "?";
+        if (publishedBeforeDate) {
+          queryParams = `${queryParams}publishedBefore=${publishedBeforeDate.toISOString()}&`;
+        }
+
+        if (publishedAfterDate) {
+          queryParams = `${queryParams}publishedAfter=${publishedAfterDate.toISOString()}`;
+        }
+      }
+
       router
-        .push(`/channel/${youtubeChannelId}`)
+        .push(`/channel/${youtubeChannelId}${queryParams}`)
         .catch((e) => console.log("router failed???", e));
     }
-  }, [router, youtubeChannelId, youtubeCustomUrl]);
+  }, [
+    publishedAfterDate,
+    publishedBeforeDate,
+    router,
+    youtubeChannelId,
+    youtubeCustomUrl,
+  ]);
 
   const submitYoutubeCustomUrl = () => {
     if (!youtubeCustomUrl) {
@@ -79,10 +102,40 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="mt-2">
+          <div className="flex rounded-md px-3 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 sm:max-w-md">
+            <span className="flex select-none items-center py-1.5 pr-3 text-white sm:text-sm">
+              Published Before (Optional):
+            </span>
+            <input
+              name="publishedBefore"
+              type="date"
+              onChange={(e) =>
+                setPublishBeforeDate(new Date(e.target.value.replace("-", "/")))
+              }
+              className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div className="mt-2">
+          <div className="flex rounded-md px-3 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 sm:max-w-md">
+            <span className="flex select-none items-center py-1.5 pr-3 text-white sm:text-sm">
+              Published After (Optional):
+            </span>
+            <input
+              name="publishedAfter"
+              type="date"
+              onChange={(e) =>
+                setPublishAfterDate(new Date(e.target.value.replace("-", "/")))
+              }
+              className="block flex-1 border-0 bg-transparent py-1.5 text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div className="mt-2">
           <button
             disabled={isLoading}
             type="button"
-            className="text-white bg-pink-500 hover:bg-pink-400 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-md text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center"
+            className="mr-2 inline-flex items-center rounded-md bg-pink-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-300"
             onClick={submitYoutubeCustomUrl}
           >
             {isLoading ? (
@@ -90,7 +143,7 @@ const Home: NextPage = () => {
                 <svg
                   aria-hidden="true"
                   role="status"
-                  className="inline mr-3 w-4 h-4 text-white animate-spin"
+                  className="mr-3 inline h-4 w-4 animate-spin text-white"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -113,10 +166,10 @@ const Home: NextPage = () => {
         </div>
         {errorMessage && (
           <div className="mt-2 flex flex-col items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 sm:max-w-md">
-            <span className="items-center text-white font-semibold sm:text-sm">
+            <span className="items-center font-semibold text-white sm:text-sm">
               Error
             </span>
-            <span className="p-3 items-center text-white sm:text-sm">
+            <span className="items-center p-3 text-white sm:text-sm">
               {errorMessage}
             </span>
           </div>

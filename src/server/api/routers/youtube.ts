@@ -90,7 +90,7 @@ export const youtubeRouter = createTRPCRouter({
       ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `Publish after date "${input.publishedAfter.toLocaleString()}" occurs before publish before date "${input.publishedBefore.toLocaleString()}"`,
+          message: `Publish after date "${input.publishedAfter.toLocaleDateString()}" occurs before publish before date "${input.publishedBefore.toLocaleDateString()}"`,
         });
       }
 
@@ -98,7 +98,6 @@ export const youtubeRouter = createTRPCRouter({
         "https://youtube.googleapis.com/youtube/v3/search"
       );
       youtubeSearchApiUrl.searchParams.append("key", env.GOOGLE_CLOUD_API_KEY);
-      youtubeSearchApiUrl.searchParams.append("order", "date");
       youtubeSearchApiUrl.searchParams.append("part", "id");
       youtubeSearchApiUrl.searchParams.append("part", "snippet");
       youtubeSearchApiUrl.searchParams.append("maxResults", "50");

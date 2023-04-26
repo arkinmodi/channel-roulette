@@ -7,7 +7,7 @@
     "dev": "next dev",
     "lint": "npm run lint:types && npm run lint:prettier && npm run lint:eslint",
     "lint:eslint": "SKIP_ENV_VALIDATION=1 next lint",
-    "lint:prettier": "prettier --write '**/*.{ts,tsx,json,js,mjs,cjs,yml,yaml,md}'",
+    "lint:prettier": "prettier --write --plugin-search-dir=./node_modules '**/*.{ts,tsx,json,js,mjs,cjs,yml,yaml,md}'",
     "lint:types": "tsc --project ./tsconfig.json",
     "start": "next start"
   },
@@ -37,8 +37,8 @@
     "eslint": "^8.39.0",
     "eslint-config-next": "^13.2.4",
     "postcss": "^8.4.21",
-    "prettier": "^2.8.6",
-    "prettier-plugin-tailwindcss": "^0.2.6",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.2.7",
     "tailwindcss": "^3.3.0",
     "typescript": "^5.0.2"
   },
