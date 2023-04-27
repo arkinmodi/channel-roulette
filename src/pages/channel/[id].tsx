@@ -1,6 +1,6 @@
 import { type DehydratedState } from "@tanstack/react-query";
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import { type TRPCError, type inferRouterOutputs } from "@trpc/server";
+import { TRPCError, type inferRouterOutputs } from "@trpc/server";
 import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
@@ -46,14 +46,14 @@ const RandomVideo = (
                   setIsLoading(true);
                   router.reload();
                 }}
-                className="text-white bg-pink-500 hover:bg-pink-400 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-md text-sm px-5 py-2.5 text-center mr-2 inline-flex items-center"
+                className="mr-2 inline-flex items-center rounded-md bg-pink-500 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-300"
               >
                 {isLoading ? (
                   <>
                     <svg
                       aria-hidden="true"
                       role="status"
-                      className="inline mr-3 w-4 h-4 text-white animate-spin"
+                      className="mr-3 inline h-4 w-4 animate-spin text-white"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -77,10 +77,10 @@ const RandomVideo = (
           </>
         ) : (
           <div className="mt-2 flex flex-col items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500 sm:max-w-md">
-            <span className="items-center text-white font-semibold sm:text-sm">
-              Error: Invalid YouTube Channel ID
+            <span className="items-center font-semibold text-white sm:text-sm">
+              Error
             </span>
-            <span className="p-3 items-center text-white sm:text-sm">
+            <span className="items-center p-3 text-white sm:text-sm">
               {props.error}
             </span>
           </div>
@@ -140,9 +140,34 @@ export async function getServerSideProps(
   });
 
   const id = context.params?.id as string;
+  const publishedBefore = context.query["publishedBefore"];
+  const publishedAfter = context.query["publishedAfter"];
+
+  if (publishedBefore === undefined || Array.isArray(publishedBefore)) {
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+        success: false,
+        error: "Invalid Published Before date",
+      },
+    };
+  }
+
+  if (publishedAfter === undefined || Array.isArray(publishedAfter)) {
+    return {
+      props: {
+        trpcState: helpers.dehydrate(),
+        success: false,
+        error: "Invalid Published After date",
+      },
+    };
+  }
+
   try {
     const data = await helpers.getRandomVideoFromChannel.fetch({
       channelId: id,
+      publishedBefore: new Date(publishedBefore),
+      publishedAfter: new Date(publishedAfter),
     });
     return {
       props: {
@@ -152,11 +177,21 @@ export async function getServerSideProps(
       },
     };
   } catch (e) {
+    if (e instanceof TRPCError) {
+      return {
+        props: {
+          trpcState: helpers.dehydrate(),
+          success: false,
+          error: e.message,
+        },
+      };
+    }
+
     return {
       props: {
         trpcState: helpers.dehydrate(),
         success: false,
-        error: (e as TRPCError).message,
+        error: "An unknown error occured",
       },
     };
   }
