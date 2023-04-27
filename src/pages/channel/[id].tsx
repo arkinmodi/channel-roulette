@@ -143,7 +143,7 @@ export async function getServerSideProps(
   const publishedBefore = context.query["publishedBefore"];
   const publishedAfter = context.query["publishedAfter"];
 
-  if (publishedBefore === undefined || Array.isArray(publishedBefore)) {
+  if (Array.isArray(publishedBefore)) {
     return {
       props: {
         trpcState: helpers.dehydrate(),
@@ -153,7 +153,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (publishedAfter === undefined || Array.isArray(publishedAfter)) {
+  if (Array.isArray(publishedAfter)) {
     return {
       props: {
         trpcState: helpers.dehydrate(),
@@ -166,8 +166,8 @@ export async function getServerSideProps(
   try {
     const data = await helpers.getRandomVideoFromChannel.fetch({
       channelId: id,
-      publishedBefore: new Date(publishedBefore),
-      publishedAfter: new Date(publishedAfter),
+      publishedBefore: publishedBefore ? new Date(publishedBefore) : undefined,
+      publishedAfter: publishedAfter ? new Date(publishedAfter) : undefined,
     });
     return {
       props: {
