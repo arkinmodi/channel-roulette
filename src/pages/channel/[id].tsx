@@ -15,7 +15,7 @@ import {
 } from "~/server/api/routers/youtube";
 
 const RandomVideo = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -122,7 +122,7 @@ const YouTubeEmbed: React.FC<{ videoId: string }> = (props) => {
 type YoutubeRouterOutput = inferRouterOutputs<YoutubeRouter>;
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>
+  context: GetServerSidePropsContext<{ id: string }>,
 ): Promise<
   | {
       props: {
