@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [publishedBeforeDate, setPublishBeforeDate] = useState<Date | null>(
-    null
+    null,
   );
   const [publishedAfterDate, setPublishAfterDate] = useState<Date | null>(null);
 
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         setIsLoading(false);
         setErrorMessage(error.message);
       },
-    }
+    },
   );
 
   useEffect(() => {

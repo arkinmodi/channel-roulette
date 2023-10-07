@@ -15,7 +15,7 @@ export const youtubeRouter = createTRPCRouter({
           headers: {
             Accept: "text/html",
           },
-        }
+        },
       );
 
       if (!youtubeChannelPageResponse.ok) {
@@ -44,7 +44,7 @@ export const youtubeRouter = createTRPCRouter({
       const start = youtubeChannelPageHtml.indexOf(META_PROPERTY);
       const end = youtubeChannelPageHtml.indexOf(
         ">",
-        start + META_PROPERTY.length
+        start + META_PROPERTY.length,
       );
 
       const metaContent = youtubeChannelPageHtml
@@ -80,7 +80,7 @@ export const youtubeRouter = createTRPCRouter({
         channelId: z.string(),
         publishedBefore: z.date().optional(),
         publishedAfter: z.date().optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       if (
@@ -95,7 +95,7 @@ export const youtubeRouter = createTRPCRouter({
       }
 
       const youtubeSearchApiUrl = new URL(
-        "https://youtube.googleapis.com/youtube/v3/search"
+        "https://youtube.googleapis.com/youtube/v3/search",
       );
       youtubeSearchApiUrl.searchParams.append("key", env.GOOGLE_CLOUD_API_KEY);
       youtubeSearchApiUrl.searchParams.append("part", "id");
@@ -107,14 +107,14 @@ export const youtubeRouter = createTRPCRouter({
       if (input.publishedBefore) {
         youtubeSearchApiUrl.searchParams.append(
           "publishedBefore",
-          input.publishedBefore.toISOString()
+          input.publishedBefore.toISOString(),
         );
       }
 
       if (input.publishedAfter) {
         youtubeSearchApiUrl.searchParams.append(
           "publishedAfter",
-          input.publishedAfter.toISOString()
+          input.publishedAfter.toISOString(),
         );
       }
 
