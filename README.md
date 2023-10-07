@@ -17,5 +17,4 @@ Watch a Random YouTube Video from a Specific Channel
 - [tailwindcss](https://tailwindcss.com/)
 - [YouTube Data API v3](https://developers.google.com/youtube/v3)
 
-Deployed on [Vercel](https://vercel.com/)\
-Bootstrapped by [create-t3-app](https://github.com/t3-oss/create-t3-app)
+Created using [create-t3-app](https://github.com/t3-oss/create-t3-app)
