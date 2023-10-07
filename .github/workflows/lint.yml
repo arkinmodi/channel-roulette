@@ -1,34 +1,59 @@
-name: Lint Application
-on:
+# yamllint disable rule:line-length
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# yamllint enable rule:line-length
+---
+name: Lint
+"on":
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
       - test-me-*
 
 jobs:
-  lint_app:
-    name: 🧽 Lint and Typecheck Application
+  yamllint:
     runs-on: ubuntu-latest
     steps:
-      - name: 🛎 Checkout
-        uses: actions/checkout@v3
-
-      - name: 💻 Setup Node
-        uses: actions/setup-node@v3.8.1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
         with:
-          node-version: "18"
-          cache: "npm"
+          python-version: 3.x
+      - run: python3 -m pip install yamllint
+      - run: python3 -m yamllint --strict .
 
-      - name: 🚧 Install Dependencies
-        run: npm ci
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+      - run: npm ci
+      - run: >
+          npx prettier
+          --check
+          '**/*.{ts,tsx,json,js,mjs,cjs,yml,yaml,md}'
 
-      - name: 🧽 Run Typecheck
-        run: npx tsc --project ./tsconfig.json
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --project ./tsconfig.json
 
-      - name: 🧽 Run Prettier
-        run: npx prettier --check '**/*.{ts,tsx,json,js,mjs,cjs,yml,yaml,md}'
-
-      - name: 🧽 Run ESLint
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+      - run: npm ci
+      - run: npx next lint
         env:
           SKIP_ENV_VALIDATION: 1
-        run: npx next lint
